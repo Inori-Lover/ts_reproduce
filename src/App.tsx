@@ -1,22 +1,19 @@
-import * as React from 'react';
-import './App.css';
+import React, { Fragment } from 'react'
 
-import logo from './logo.svg';
+import Main from './routes/_main'
+import Person from './routes/_person'
+import ShoppingCar from './routes/_shoppingcar'
+import Typelist from './routes/_typelist'
 
-class App extends React.Component {
-  public render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
+const routeList = [
+  <Main />,
+  <Person />,
+  <ShoppingCar />,
+  <Typelist />
+]
 
-export default App;
+export default () => (
+  <Fragment>
+    { routeList }
+  </Fragment>
+)
