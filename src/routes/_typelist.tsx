@@ -10,7 +10,7 @@ const Typelist = Loadable({ loader: () => import( /* webpackChunkName: "page_typ
 class App extends React.Component {
   public render () {
     return (
-      <Route key='pageTypelist' path='/typelist' component={ Typelist }/>
+      <Route path='/typelist' component={ Typelist }/>
     )
   }
 }

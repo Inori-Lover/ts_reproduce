@@ -10,7 +10,7 @@ const Car = Loadable({ loader: () => import( /* webpackChunkName: "page_shopping
 class App extends React.Component {
   public render () {
     return (
-      <Route key='pageCar' path='/car' component={ Car }/>
+      <Route path='/car' component={ Car }/>
     )
   }
 }

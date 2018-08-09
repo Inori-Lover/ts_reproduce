@@ -10,7 +10,7 @@ const Person = Loadable({ loader: () => import( /* webpackChunkName: "page_perso
 class App extends React.Component {
   public render () {
     return (
-      <Route key='pagePerson' path='/person' component={ Person }/>
+      <Route path='/person' component={ Person }/>
     )
   }
 }

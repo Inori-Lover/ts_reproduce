@@ -10,7 +10,7 @@ const Main = Loadable({ loader: () => import( /* webpackChunkName: "page_main" *
 class App extends React.Component {
   public render () {
     return (
-      <Route key='pageMain' path='/main' component={ Main }/>
+      <Route path='/main' component={ Main }/>
     )
   }
 }
