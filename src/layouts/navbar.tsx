@@ -1,22 +1,16 @@
-import React, { PureComponent } from 'react'
+import React, { SFC, ReactNode } from 'react'
 
-const initialState = {  }
+type Props = {
+  children: ReactNode
+ }
 
-type State = Readonly<typeof initialState>
-// type Props = Partial<{
-//   children:
-// }
-
-export default class Page extends PureComponent {
-
-  readonly state: State = initialState
-
-  public render () {
-    return (
-      <div>
-        { this.props.children }
-        <div>i am navbar.</div>
-      </div>
-    )
-  }
+export const Page: SFC<Props> = ({ children }) => {
+  return (
+    <div>
+      { children }
+      <div>i am navbar.</div>
+    </div>
+  )
 }
+
+export default Page
