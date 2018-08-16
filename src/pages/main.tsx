@@ -14,10 +14,10 @@ export default class Page extends React.PureComponent {
 
   public render () {
     return (
-      <div>
+      <>
         <div>i am main. { Date.now() }</div>
         <button onClick={ this.changeTime }>修改时间 { Date.now() }</button>
-      </div>
+      </>
     )
   }
 }
