@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch, Redirect, Link } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Main from './routes/_main'
 import Person from './routes/_person'
@@ -13,13 +13,6 @@ import Loading from "./components/Loading";
  */
 export default () => (
   <>
-    {/* 测试导航 */}
-    <Link to="/main">main</Link><br />
-    <Link to="/person">person</Link><br />
-    <Link to="/car">car</Link><br />
-    <Link to="/typelist">typelist</Link><br />
-    <br />
-    {/* 测试导航 end */}
     <Switch>
 
       {/* 有效组件 */}

@@ -2,6 +2,7 @@ import React, { SFC } from 'react'
 import { Route, match } from 'react-router'
 import Loadable from 'react-loadable'
 
+import { config } from "../config/index_navbar"
 import Loading from '../components/Loading'
 import { preloadAll } from "../tools/preLoadAll"
 
@@ -14,7 +15,7 @@ type Props = { match: match<null> }
 export const App:SFC<Props> = ({ match }) => {
   preloadAll({ Person, NavbarLayout })
   return (
-    <NavbarLayout>
+    <NavbarLayout {...config} active="个人中心">
       <Route path={`${match.path}`} component={ Person }/>
     </NavbarLayout>
   )
