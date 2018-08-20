@@ -16,14 +16,7 @@
  */
 
 import { ComponentType } from "react";
-
-/**
- * Pick<Target, Key>为选取A B交集，Exclude<T, U>为选取A B差集
- * Omit<Target, Key>为选取A B补集
- * 以上 Key 均为 keyof Target 的子集
- * 以上 U   均为 T            的子集
- */
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+import { Omit } from './Omit'
 
 export const withDefaultProps = <
   P extends object,

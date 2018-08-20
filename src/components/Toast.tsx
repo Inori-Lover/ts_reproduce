@@ -1,22 +1,37 @@
 // 弹窗组件
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom'
-
-const initalState = {
-  show: true,
-  content: '',
-  autoHide: 300
-}
-
-type InitalState = Readonly<typeof initalState>
+import { Omit } from "../tools/Omit";
 
 /**
- * 可选State
+ * 全量State
+ *
+ * @desc
+ * 按照最佳实践React的State应该在初始化时全部备齐，如数据不在初始化时获取则初始化为null
+ * 保证类型完整
  */
-export type State = {
-  show?: boolean,
-  content?: string,
-  autoHide?: number
+type InitalState = {
+  show: boolean
+  content: string
+  autoHide: number
+  time: null|number
+}
+
+/**
+ * 不允许外部修改的 State 的 属性列表
+ */
+type ShadowState = "time"
+
+/**
+ * 对外导出的State
+ */
+export type State = Partial<Omit<InitalState, ShadowState>>
+
+const initalState: InitalState = {
+  show: true,
+  content: '',
+  autoHide: 300,
+  time: null
 }
 
 /**
