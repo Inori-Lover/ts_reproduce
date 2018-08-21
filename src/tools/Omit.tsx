@@ -6,4 +6,4 @@
  * 以上 Key 为 keyof Target 的子集
  * 以上 U   为 T            的子集
  */
-export type Omit<T extends Record<any, any>, K extends string> = Pick<T, Exclude<keyof T, K>>
+export type Omit<T extends Record<any, any>, K extends string | number | symbol> = Pick<T, Exclude<keyof T, K>>
