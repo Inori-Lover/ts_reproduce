@@ -1,4 +1,5 @@
 // 弹窗组件
+// 以后还是用react-
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom'
 import { Omit } from "../tools/Omit";

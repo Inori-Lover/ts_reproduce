@@ -1,0 +1,12 @@
+.react_mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transform: scaleX(0);
+  transition: transform .2s east-in-out;
+  &.active {
+    transform: scaleX(1);
+  }
+}
