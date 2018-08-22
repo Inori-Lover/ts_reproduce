@@ -5,8 +5,17 @@
   width: 100vw;
   height: 100vh;
   transform: scaleX(0);
-  transition: transform .2s east-in-out;
+  transform-origin: top right;
+  /**
+   * 这一句阻止滚动的关键
+   * @url https://developers.google.com/web/updates/2017/01/scrolling-intervention
+   */
+  touch-action: none;
+  opacity: 0;
+  transition: opacity .25s ease-in-out, transform .01s ease-in-out .24s;
   &.active {
+    opacity: 1;
     transform: scaleX(1);
+    transition: opacity .25s ease-in-out;
   }
 }

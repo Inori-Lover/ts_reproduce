@@ -19,12 +19,13 @@ type InitalState = {
   background: string
   zIndex: number
   onClose: () => void
+  touchmove: null| number
 }
 
 /**
  * 不允许外部修改的 State 的 属性列表
  */
-type ShadowState = ''
+type ShadowState = 'touchmove'
 
 /**
  * 对外导出的State
@@ -33,9 +34,10 @@ export type State = Partial<Omit<InitalState, ShadowState>>
 
 const initalState: InitalState = {
   popup: false,
-  background: 'rgba(255,255,255, .8)',
+  background: 'rgba(0, 0, 0, .8)',
   zIndex: VAR.zIndex.mask,
   onClose: function () {},
+  touchmove: null,
 }
 
 
@@ -51,20 +53,40 @@ class Mask extends PureComponent<any, InitalState> {
       popup: false
     })
     this.state.onClose && this.state.onClose()
-    return false
   }
 
   public touchMoveHandle = (evt: React.TouchEvent) => {
-    evt.stopPropagation()
+    const clientY = evt.touches[0].clientY
+    if (this.state.touchmove !== null && Math.abs(clientY - this.state.touchmove) > 5) {
+      evt.preventDefault()
+    } else {
+      this.setState(function () {
+        return {
+          touchmove: clientY
+        }
+      })
+    }
+  }
+
+  public clearTouchMove = () => {
+    this.setState(function () {
+      return {
+        touchmove: null
+      }
+    })
   }
 
   public render() {
     return (
       <div
         className={`react_mask ${this.state.popup ? 'active' : ''}`}
-        style={{zIndex: this.state.zIndex, background: this.state.background}}
+        style={{
+          zIndex: this.state.zIndex,
+          background: this.state.background,
+        }}
         onClick={this.clickHandle}
-        onTouchMoveCapture={this.touchMoveHandle}
+        onTouchMove={this.touchMoveHandle}
+        onTouchStart={this.clearTouchMove}
       >
       </div>
     )

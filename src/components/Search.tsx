@@ -38,7 +38,6 @@ const initalState: InitalState = {
 }
 
 const FakeInput = React.forwardRef((props: any, ref: any) => {
-  console.dir({...props})
   return (
     <input ref={ref} {...props} />
   )
@@ -76,7 +75,7 @@ class SearchBar extends PureComponent<any, InitalState> {
         })
         Mask.open()
         Mask.onClose(this.closeHandle)
-        // this.fakeInput.current.focus()
+        this.fakeInput.current.scrollIntoView()
       }
     }
     return false
@@ -101,7 +100,7 @@ class SearchBar extends PureComponent<any, InitalState> {
         <div className="slie_border input_box">
           <input value={this.state.value} readOnly {...this.props}/>
         </div>
-        <div className={`slie_border input_box fake_input ${this.state.popup ? 'active' : ''}`} onClick={this.popupHandle} style={{transform: `translateY(-${this.state.transformTop})`, zIndex: this.state.popup ? VAR.zIndex.abovemask : 'unset'}}>
+        <div className={`slie_border input_box fake_input ${this.state.popup ? 'active' : ''}`} onClick={this.popupHandle} style={{transform: `translateY(-${this.state.transformTop})`, zIndex: VAR.zIndex.abovemask}}>
           <FakeInput ref={this.fakeInput} value={this.state.value} onChange={this.handleChange} />
         </div>
       </div>
