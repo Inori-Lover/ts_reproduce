@@ -28,7 +28,7 @@ export const withDefaultProps = <
   // ① 提取出必须的属性
   type RequiredProps = Omit<P, keyof DP>;
   // ② 重新创建我们的属性定义，通过一个相交类型，将所有的原始属性标记成可选的，必选的属性标记成可选的
-  type Props = Partial<DP> & Required<RequiredProps>;
+  type Props = Partial<DP> & RequiredProps;
 
   Component.defaultProps = defaultProps;
 
