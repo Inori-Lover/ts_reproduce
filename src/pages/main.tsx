@@ -13,11 +13,15 @@ export default class Page extends React.PureComponent {
     return null
   }
 
+  private consoleLog = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(`from main: ${evt.currentTarget.value}`)
+  }
+
   public render () {
     return (
       <>
         <div style={{minHeight: '100vh'}}>i am main.</div>
-        <SearchBar name="test" form="not_submit" />
+        <SearchBar name="test" form="not_submit" onChange={this.consoleLog} syncbetween={1} />
       </>
     )
   }

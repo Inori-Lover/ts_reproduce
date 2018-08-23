@@ -52,28 +52,9 @@ class Mask extends PureComponent<any, InitalState> {
     this.setState({
       popup: false
     })
-    this.state.onClose && this.state.onClose()
-  }
-
-  public touchMoveHandle = (evt: React.TouchEvent) => {
-    const clientY = evt.touches[0].clientY
-    if (this.state.touchmove !== null && Math.abs(clientY - this.state.touchmove) > 5) {
-      evt.preventDefault()
-    } else {
-      this.setState(function () {
-        return {
-          touchmove: clientY
-        }
-      })
-    }
-  }
-
-  public clearTouchMove = () => {
-    this.setState(function () {
-      return {
-        touchmove: null
-      }
-    })
+    setTimeout(() => {
+      this.state.onClose && this.state.onClose()
+    }, 0)
   }
 
   public render() {
@@ -85,8 +66,6 @@ class Mask extends PureComponent<any, InitalState> {
           background: this.state.background,
         }}
         onClick={this.clickHandle}
-        onTouchMove={this.touchMoveHandle}
-        onTouchStart={this.clearTouchMove}
       >
       </div>
     )

@@ -1,10 +1,11 @@
 // 搜索组件
 // 以后还是用react-
-import React, { PureComponent, FormEvent } from 'react'
+import React, { PureComponent } from 'react'
+import ReactDom from 'react-dom'
 
 import { Omit } from '../tools/Omit'
-import VAR from '../config/var'
-import Mask from './Mask'
+import { withDefaultProps } from '../tools/defaultProps'
+
 import './base.scss'
 import './Search.scss'
 
@@ -19,6 +20,8 @@ type InitalState = {
   popup: boolean
   value: string
   transformTop: string
+  currentScrollPositon: number|null
+  container: null|HTMLDivElement
 }
 
 /**
@@ -31,81 +34,130 @@ type ShadowState = ''
  */
 export type State = Partial<Omit<InitalState, ShadowState>>
 
+const defaultProps: DefaultProps = {
+  syncbetween: 1,
+}
+
+type DefaultProps = {
+  syncbetween: 0|1
+}
+
+type Props = {
+  syncbetween?: 0|1
+} & ( DefaultProps & Partial<React.InputHTMLAttributes<HTMLInputElement>>)
+
 const initalState: InitalState = {
   popup: false,
   value: 'init',
   transformTop: '0px',
+  currentScrollPositon: null,
+  container: null,
 }
 
-const FakeInput = React.forwardRef((props: any, ref: any) => {
-  return (
-    <input ref={ref} {...props} />
-  )
-})
+type FakeSearchPanleProps = {
+  hide: boolean
+}
+type FakeSearchPanleState = {
+  value: string
+  hide: boolean
+}
 
-/**
- * @class Toast
- * @desc 弹窗组件
- */
-class SearchBar extends PureComponent<any, InitalState> {
-  readonly state: InitalState = initalState
-  private fakeInput: React.RefObject<HTMLInputElement> = React.createRef()
-  private handleChange = (evt: FormEvent<HTMLInputElement>) => {
-    this.setState({
-      value: evt.currentTarget.value
-    })
-  }
-  public componentDidMount () {
-    if (this.fakeInput.current) {
-      const { width, height, top, right, bottom, left } = this.fakeInput.current.getBoundingClientRect()
-      this.setState({
-        value: '' + JSON.stringify([width, height, top, right, bottom, left])
-      })
-    }
+class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAttributes<HTMLInputElement>, FakeSearchPanleState> {
+  readonly state: FakeSearchPanleState = {
+    value: '',
+    hide: true
   }
 
-  public popupHandle = () => {
-    if (this.fakeInput.current) {
-      const { width, height, top, right, bottom, left } = this.fakeInput.current.getBoundingClientRect()
-      if (top) {
-        this.setState({
-          popup: true,
-          transformTop: `${top}px`,
-          value: '' + JSON.stringify([width, height, top, right, bottom, left]),
-        })
-        Mask.open()
-        Mask.onClose(this.closeHandle)
-        this.fakeInput.current.scrollIntoView()
+  private inputElementRef: React.RefObject<HTMLInputElement> = React.createRef()
+
+  private changeHandle (evt: React.ChangeEvent<HTMLInputElement>) {
+    this.setState(function () {
+      return {
+        value: '',
       }
-    }
-    return false
+    })
+    this.props.onChange && this.props.onChange(evt)
   }
 
-  public focusHandle = () => {
-    if ( this.fakeInput.current ) {
-      this.fakeInput.current.focus()
-    }
+  /**
+   * 这个点击不focus的现象还不清楚是什么原理，似乎是fstclick带进来的bug但是并不清除触发条件
+   */
+  private clickHandle = () => {
+    this.inputElementRef.current && this.inputElementRef.current.focus()
   }
 
-  public closeHandle = () => {
-    this.setState({
-      popup: false,
-      transformTop: '0px'
+  public popup = () => {
+    this.setState(function () {
+      return {
+        hide: false
+      }
     })
   }
 
-  public render() {
+  public render () {
     return (
-      <div className='react_searchbar_input_container' style={{minHeight: '100px'}}>
+      <div className={`fake_search_panle ${!this.state.hide ? 'active' : 'hide'}`}>
         <div className="slie_border input_box">
-          <input value={this.state.value} readOnly {...this.props}/>
-        </div>
-        <div className={`slie_border input_box fake_input ${this.state.popup ? 'active' : ''}`} onClick={this.popupHandle} style={{transform: `translateY(-${this.state.transformTop})`, zIndex: VAR.zIndex.abovemask}}>
-          <FakeInput ref={this.fakeInput} value={this.state.value} onChange={this.handleChange} />
+          <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.clickHandle } ref={ this.inputElementRef } />
         </div>
       </div>
     )
   }
 }
 
-export default SearchBar;
+/**
+ * @class SearchBar
+ * @desc 搜索栏
+ */
+class SearchBar extends PureComponent<Props, InitalState> {
+  readonly state: InitalState = initalState
+
+  private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
+
+  public componentDidMount () {
+    const container = document.createElement('div')
+    container.className = 'fake_search_panle_container'
+    document.body.appendChild(container)
+    ReactDom.render(<FakeSearchPanle onChange={ this.props.onChange } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } />, container)
+    this.setState(function () {
+      return {
+        container: container
+      }
+    })
+  }
+
+  public componentWillUnmount () {
+    if (this.state.container) {
+      const container = this.state.container
+      ReactDom.unmountComponentAtNode(container)
+      container.remove()
+    }
+  }
+
+  private popupHandle = () => {
+    this.setState({
+      popup: true,
+    })
+    if (this.FakeSearchPanleRef.current) {
+      console.log(this.FakeSearchPanleRef.current.state)
+      this.FakeSearchPanleRef.current.popup()
+      console.log(this.FakeSearchPanleRef.current.state)
+    }
+    // 禁止文档滚动
+    if (!document.body.className.match('js-temp_overflow_hidden')) {
+      document.body.className += 'js-temp_overflow_hidden'
+    }
+  }
+
+  public render() {
+    return (
+      <div className='react_searchbar_input_container' style={{minHeight: '100px'}}>
+        <div className="slie_border input_box" onClick={this.popupHandle}>
+          <input value={this.props.syncbetween === 1 ? this.state.value : ''} readOnly {...this.props}/>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default withDefaultProps(defaultProps, SearchBar)
