@@ -19,6 +19,7 @@ import './Search.scss'
 type InitalState = {
   popup: boolean
   value: string
+  displayValue: string
   transformTop: string
   currentScrollPositon: number|null
   container: null|HTMLDivElement
@@ -53,6 +54,7 @@ type FakeSearchPanleProps = {
   hide: boolean
   onClose?: (() => void)
   value?: string
+  onsubmit: (evt: React.FormEvent<HTMLFormElement>) => void
 }
 type FakeSearchPanleState = {
   value: string
@@ -93,6 +95,11 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
     this.close()
     this.state._timer && window.clearInterval(this.state._timer)
     this.props.onClose && this.props.onClose()
+  }
+
+  private submitHandle = (evt: React.FormEvent<HTMLFormElement>) => {
+    this.props.onsubmit(evt)
+    return false
   }
 
   public popup = () => {
@@ -141,9 +148,11 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
 
   public render () {
     return (
-      <div className={`fake_search_panle ${!this.state.hide ? 'active' : 'hide'}`} onClick={this.clickHandle}>
+      <div className={ `fake_search_panle ${ !this.state.hide ? 'active' : 'hide' }` } onClick={ this.clickHandle }>
         <div className="slie_border input_box">
-          <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.focusHelper } ref={ this.inputElementRef } />
+          <form action="#" method="get" onSubmit={ this.submitHandle }>
+            <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.focusHelper } ref={ this.inputElementRef } />
+          </form>
         </div>
       </div>
     )
@@ -157,6 +166,7 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
 class SearchBar extends PureComponent<Props, InitalState> {
   readonly state: InitalState = {
     popup: false,
+    displayValue: this.props.value ? this.props.value + '' : '空值初始化',
     value: this.props.value ? this.props.value + '' : '空值初始化',
     transformTop: '0px',
     currentScrollPositon: null,
@@ -164,12 +174,14 @@ class SearchBar extends PureComponent<Props, InitalState> {
   }
 
   private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
+  private inputRef: React.RefObject<HTMLInputElement> = React.createRef()
+  private submittRef: React.RefObject<HTMLInputElement> = React.createRef()
 
   public componentDidMount () {
     const container = document.createElement('div')
     container.className = 'fake_search_panle_container'
     document.body.appendChild(container)
-    ReactDom.render(<FakeSearchPanle onChange={ this.changeHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />, container)
+    ReactDom.render(<FakeSearchPanle onChange={ this.changeHandle } onsubmit={ this.submitHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />, container)
     this.setState(function () {
       return {
         container: container
@@ -187,9 +199,14 @@ class SearchBar extends PureComponent<Props, InitalState> {
 
   public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = evt.target.value
-    this.props.syncbetween && this.setState(function () {
+    this.props.syncbetween ? this.setState(function () {
       return {
-        value: value
+        value: value,
+        displayValue: value,
+      }
+    }) : this.setState(function () {
+      return {
+        value: value,
       }
     })
     this.props.onChange && this.props.onChange(evt)
@@ -215,11 +232,23 @@ class SearchBar extends PureComponent<Props, InitalState> {
     }
   }
 
+  private submitHandle = (evt: React.FormEvent<HTMLFormElement>) => {
+    this.setState(function (prevState) {
+      return {
+        displayValue: prevState.value
+      }
+    })
+    setTimeout(() => {
+      this.submittRef.current && this.submittRef.current.click()
+    }, 0);
+  }
+
   public render() {
     return (
-      <div className='react_searchbar_input_container' style={{minHeight: '100px'}}>
+      <div className='react_searchbar_input_container'>
         <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input {...this.props} readOnly value={this.state.value}/>
+          <input {...this.props} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
+          <input type="submit" style={{display: 'none'}} ref={this.submittRef}/>
         </div>
       </div>
     )

@@ -20,8 +20,10 @@ export default class Page extends React.PureComponent {
   public render () {
     return (
       <>
-        <div style={{minHeight: '100vh'}}>i am main.</div>
-        <SearchBar name="test" form="not_submit" onChange={this.consoleLog} />
+        <div>i am main.</div>
+        <form action="https://www.baidu.com/s" method="get">
+          <SearchBar name="wd" onChange={this.consoleLog} />
+        </form>
       </>
     )
   }
