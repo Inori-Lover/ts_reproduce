@@ -21,7 +21,7 @@ export default class Page extends React.PureComponent {
     return (
       <>
         <div style={{minHeight: '100vh'}}>i am main.</div>
-        <SearchBar name="test" form="not_submit" onChange={this.consoleLog} syncbetween={1} />
+        <SearchBar name="test" form="not_submit" onChange={this.consoleLog} />
       </>
     )
   }
