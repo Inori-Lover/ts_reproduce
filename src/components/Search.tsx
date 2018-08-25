@@ -49,11 +49,99 @@ type Props = {
   syncbetween?: boolean
 } & ( DefaultProps & Partial<React.InputHTMLAttributes<HTMLInputElement>>)
 
+
+/**
+ * @class SearchBar
+ * @desc 搜索栏
+ */
+class SearchBar extends PureComponent<Props & RouteComponentProps<any>, InitalState> {
+  readonly state: InitalState = {
+    popup: false,
+    displayValue: this.props.value ? this.props.value + '' : '空值初始化',
+    value: this.props.value ? this.props.value + '' : '空值初始化',
+    transformTop: '0px',
+    currentScrollPositon: null,
+  }
+
+  private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
+  private inputRef: React.RefObject<HTMLInputElement> = React.createRef()
+
+  public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const value = evt.target.value
+    this.props.syncbetween ? this.setState(function () {
+      return {
+        value: value,
+        displayValue: value,
+      }
+    }) : this.setState(function () {
+      return {
+        value: value,
+      }
+    })
+    this.props.onChange && this.props.onChange(evt)
+  }
+
+  private popupHandle = () => {
+    this.setState({
+      popup: true,
+    })
+    if (this.FakeSearchPanleRef.current) {
+      this.FakeSearchPanleRef.current.popup()
+    }
+    // 禁止文档滚动
+    if (!document.body.className.match('js-temp_overflow_hidden')) {
+      document.body.className += 'js-temp_overflow_hidden'
+    }
+    // 历史记录管理
+    this.props.history.replace({
+      pathname: `${this.props.match.path}/search`,
+      state: {
+        search: true
+      }
+    })
+  }
+
+  private closeHandle = () => {
+    // 取消禁止文档滚动
+    if (document.body.className.match('js-temp_overflow_hidden')) {
+      document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
+    }
+    // 历史记录管理
+    this.props.history.replace({
+      pathname: this.props.location.pathname.replace(/\/search$/, '')
+    })
+  }
+
+  public render() {
+    const { syncbetween, staticContext, ...nextProps } = this.props
+    return (
+      <div className='react_searchbar_input_container'>
+        <div className="slie_border input_box" onClick={this.popupHandle}>
+          <input {...nextProps} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
+        </div>
+        <Route path={this.props.match.path} render={
+          () => (
+            <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />
+          )
+        } />
+      </div>
+    )
+  }
+}
+
+export default withDefaultProps(defaultProps, withRouter(SearchBar))
+
+/**
+ * 伪弹窗Props定义
+ */
 type FakeSearchPanleProps = {
   hide: boolean
   onClose?: (() => void)
   value?: string
 }
+/**
+ * 伪弹窗State定义
+ */
 type FakeSearchPanleState = {
   value: string
   hide: boolean
@@ -61,6 +149,9 @@ type FakeSearchPanleState = {
   _scrollPosition: number|null
 }
 
+/**
+ * 伪弹窗组件，未export
+ */
 class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAttributes<HTMLInputElement> & RouteComponentProps<any>, FakeSearchPanleState> {
   readonly state: FakeSearchPanleState = {
     value: this.props.value || '',
@@ -69,8 +160,14 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
     _scrollPosition: null
   }
 
+  /**
+   * 伪弹窗input 引用，主要用于处理focus相关操作
+   */
   private inputElementRef: React.RefObject<HTMLInputElement> = React.createRef()
 
+  /**
+   * 路由信息读取，当路由以 /search 结尾则进行弹出
+   */
   public componentDidMount () {
     if (this.props.location.pathname.match(/\/search$/)) {
       this.popup()
@@ -156,84 +253,3 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
     )
   }
 }
-
-/**
- * @class SearchBar
- * @desc 搜索栏
- */
-class SearchBar extends PureComponent<Props & RouteComponentProps<any>, InitalState> {
-  readonly state: InitalState = {
-    popup: false,
-    displayValue: this.props.value ? this.props.value + '' : '空值初始化',
-    value: this.props.value ? this.props.value + '' : '空值初始化',
-    transformTop: '0px',
-    currentScrollPositon: null,
-  }
-
-  private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
-  private inputRef: React.RefObject<HTMLInputElement> = React.createRef()
-
-  public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const value = evt.target.value
-    this.props.syncbetween ? this.setState(function () {
-      return {
-        value: value,
-        displayValue: value,
-      }
-    }) : this.setState(function () {
-      return {
-        value: value,
-      }
-    })
-    this.props.onChange && this.props.onChange(evt)
-  }
-
-  private popupHandle = () => {
-    this.setState({
-      popup: true,
-    })
-    if (this.FakeSearchPanleRef.current) {
-      this.FakeSearchPanleRef.current.popup()
-    }
-    // 禁止文档滚动
-    if (!document.body.className.match('js-temp_overflow_hidden')) {
-      document.body.className += 'js-temp_overflow_hidden'
-    }
-    // 历史记录管理
-    this.props.history.replace({
-      pathname: `${this.props.match.path}/search`,
-      state: {
-        search: true
-      }
-    })
-  }
-
-  private closeHandle = () => {
-    // 取消禁止文档滚动
-    if (document.body.className.match('js-temp_overflow_hidden')) {
-      document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
-    }
-    // 历史记录管理
-    this.props.history.replace({
-      pathname: this.props.location.pathname.replace(/\/search$/, '')
-    })
-  }
-
-  public render() {
-    const { syncbetween, staticContext, ...nextProps } = this.props
-    return (
-      <div className='react_searchbar_input_container'>
-        <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input {...nextProps} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
-        </div>
-        <Route path={this.props.match.path} render={
-          () => (
-            <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />
-          )
-        } />
-      </div>
-    )
-  }
-}
-
-export default withDefaultProps(defaultProps, withRouter(SearchBar))
