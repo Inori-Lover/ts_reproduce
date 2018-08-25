@@ -1,7 +1,7 @@
 // 搜索组件
 // 以后还是用react-
 import React, { PureComponent } from 'react'
-import ReactDom from 'react-dom'
+import { RouteComponentProps, withRouter, Route } from 'react-router-dom'
 
 import { Omit } from '../tools/Omit'
 import { withDefaultProps } from '../tools/defaultProps'
@@ -22,7 +22,6 @@ type InitalState = {
   displayValue: string
   transformTop: string
   currentScrollPositon: number|null
-  container: null|HTMLDivElement
 }
 
 /**
@@ -36,25 +35,24 @@ type ShadowState = ''
 export type State = Partial<Omit<InitalState, ShadowState>>
 
 const defaultProps: DefaultProps = {
-  syncbetween: 0,
+  syncbetween: true,
 }
 
 type DefaultProps = {
-  syncbetween: 0|1
+  syncbetween: boolean
 }
 
 /**
  * 对外export的组件的Props不能有boolean, 这是为了保证属性可以出现DOM中
  */
 type Props = {
-  syncbetween?: 0|1
+  syncbetween?: boolean
 } & ( DefaultProps & Partial<React.InputHTMLAttributes<HTMLInputElement>>)
 
 type FakeSearchPanleProps = {
   hide: boolean
   onClose?: (() => void)
   value?: string
-  onsubmit: (evt: React.FormEvent<HTMLFormElement>) => void
 }
 type FakeSearchPanleState = {
   value: string
@@ -63,7 +61,7 @@ type FakeSearchPanleState = {
   _scrollPosition: number|null
 }
 
-class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAttributes<HTMLInputElement>, FakeSearchPanleState> {
+class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAttributes<HTMLInputElement> & RouteComponentProps<any>, FakeSearchPanleState> {
   readonly state: FakeSearchPanleState = {
     value: this.props.value || '',
     hide: true,
@@ -72,6 +70,12 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
   }
 
   private inputElementRef: React.RefObject<HTMLInputElement> = React.createRef()
+
+  public componentDidMount () {
+    if (this.props.location.pathname.match(/\/search$/)) {
+      this.popup()
+    }
+  }
 
   private changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = evt.target.value
@@ -91,16 +95,12 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
     this.inputElementRef.current && this.inputElementRef.current.focus()
   }
 
-  private clickHandle = (evt: React.MouseEvent<HTMLDivElement>) => {
+  private BlurHandle = () => {
     this.close()
     this.state._timer && window.clearInterval(this.state._timer)
     this.props.onClose && this.props.onClose()
   }
 
-  private submitHandle = (evt: React.FormEvent<HTMLFormElement>) => {
-    this.props.onsubmit(evt)
-    return false
-  }
 
   public popup = () => {
     this.setState(function () {
@@ -148,11 +148,9 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
 
   public render () {
     return (
-      <div className={ `fake_search_panle ${ !this.state.hide ? 'active' : 'hide' }` } onClick={ this.clickHandle }>
+      <div className={ `fake_search_panle ${ !this.state.hide ? 'active' : 'hide' }` } onClick={ this.BlurHandle }>
         <div className="slie_border input_box">
-          <form action="#" method="get" onSubmit={ this.submitHandle }>
-            <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.focusHelper } ref={ this.inputElementRef } />
-          </form>
+          <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.focusHelper } onBlur={ this.BlurHandle } ref={ this.inputElementRef } />
         </div>
       </div>
     )
@@ -163,39 +161,17 @@ class FakeSearchPanle extends PureComponent<FakeSearchPanleProps & React.HTMLAtt
  * @class SearchBar
  * @desc 搜索栏
  */
-class SearchBar extends PureComponent<Props, InitalState> {
+class SearchBar extends PureComponent<Props & RouteComponentProps<any>, InitalState> {
   readonly state: InitalState = {
     popup: false,
     displayValue: this.props.value ? this.props.value + '' : '空值初始化',
     value: this.props.value ? this.props.value + '' : '空值初始化',
     transformTop: '0px',
     currentScrollPositon: null,
-    container: null,
   }
 
   private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
   private inputRef: React.RefObject<HTMLInputElement> = React.createRef()
-  private submittRef: React.RefObject<HTMLInputElement> = React.createRef()
-
-  public componentDidMount () {
-    const container = document.createElement('div')
-    container.className = 'fake_search_panle_container'
-    document.body.appendChild(container)
-    ReactDom.render(<FakeSearchPanle onChange={ this.changeHandle } onsubmit={ this.submitHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />, container)
-    this.setState(function () {
-      return {
-        container: container
-      }
-    })
-  }
-
-  public componentWillUnmount () {
-    if (this.state.container) {
-      const container = this.state.container
-      ReactDom.unmountComponentAtNode(container)
-      container.remove()
-    }
-  }
 
   public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = evt.target.value
@@ -223,6 +199,13 @@ class SearchBar extends PureComponent<Props, InitalState> {
     if (!document.body.className.match('js-temp_overflow_hidden')) {
       document.body.className += 'js-temp_overflow_hidden'
     }
+    // 历史记录管理
+    this.props.history.replace({
+      pathname: `${this.props.match.path}/search`,
+      state: {
+        search: true
+      }
+    })
   }
 
   private closeHandle = () => {
@@ -230,29 +213,27 @@ class SearchBar extends PureComponent<Props, InitalState> {
     if (document.body.className.match('js-temp_overflow_hidden')) {
       document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
     }
-  }
-
-  private submitHandle = (evt: React.FormEvent<HTMLFormElement>) => {
-    this.setState(function (prevState) {
-      return {
-        displayValue: prevState.value
-      }
+    // 历史记录管理
+    this.props.history.replace({
+      pathname: this.props.location.pathname.replace(/\/search$/, '')
     })
-    setTimeout(() => {
-      this.submittRef.current && this.submittRef.current.click()
-    }, 0);
   }
 
   public render() {
+    const { syncbetween, staticContext, ...nextProps } = this.props
     return (
       <div className='react_searchbar_input_container'>
         <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input {...this.props} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
-          <input type="submit" style={{display: 'none'}} ref={this.submittRef}/>
+          <input {...nextProps} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
         </div>
+        <Route path={this.props.match.path} render={
+          () => (
+            <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />
+          )
+        } />
       </div>
     )
   }
 }
 
-export default withDefaultProps(defaultProps, SearchBar)
+export default withDefaultProps(defaultProps, withRouter(SearchBar))

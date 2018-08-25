@@ -2,7 +2,10 @@ html, body, #root {
   // 移动端没事就尽量避免height 100的设置，ios下滚动贼难受，原因暂不明
   font-family: "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", Helvetica, "Microsoft YaHei", Arial;
   background-color: #fff;
+  // ios下如果不撑成100vh会有“点击黑幕”
+  min-height: 100vh;
 }
+
 *,
 *::before,
 *::after {
