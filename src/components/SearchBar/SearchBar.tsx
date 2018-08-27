@@ -77,9 +77,9 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     currentScrollPositon: null,
   }
 
-  private FakeSearchPanleRef: React.RefObject<FakeSearchPanle> = React.createRef()
-  private inputRef: React.RefObject<HTMLInputElement> = React.createRef()
-
+  /**
+   * input值变动处理
+   */
   public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = evt.target.value
     this.props.syncbetween ? this.setState(function () {
@@ -95,18 +95,25 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     this.props.onChange && this.props.onChange(evt)
   }
 
+  /**
+   * 弹层弹出控制函数
+   */
   private popupHandle = () => {
+    /**
+     * 弹出弹层
+     */
     this.setState({
       popup: true,
     })
-    if (this.FakeSearchPanleRef.current) {
-      this.FakeSearchPanleRef.current.popup()
-    }
-    // 禁止文档滚动
+    /**
+     * 添加文档滚动限制
+     */
     if (!document.body.className.match('js-temp_overflow_hidden')) {
       document.body.className += 'js-temp_overflow_hidden'
     }
-    // 历史记录管理
+    /**
+     * 实现url与弹层状态对应关系
+     */
     this.props.history.replace({
       pathname: `${this.props.match.path}/search`,
       state: {
@@ -115,25 +122,44 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     })
   }
 
+  /**
+   * 弹层关闭控制函数
+   */
   private closeHandle = () => {
-    // 取消禁止文档滚动
+    /**
+     * 关闭弹层
+     */
+    this.setState(function () {
+      return {
+        popup: false,
+      }
+    })
+    /**
+     * 取消文档滚动限制
+     */
     if (document.body.className.match('js-temp_overflow_hidden')) {
       document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
     }
-    // 历史记录管理
+    /**
+     * 实现url与弹层状态对应关系
+     */
     this.props.history.replace({
       pathname: this.props.location.pathname.replace(/\/search$/, '')
     })
   }
 
   public render() {
+    /**
+     * 分离非string类型的props防止其传递到DOM元素上造成歧义
+     */
     const { syncbetween, staticContext, ...nextProps } = this.props
+
     return (
       <div className='react_searchbar_input_container'>
         <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input {...nextProps} type="search" value={this.state.displayValue} ref={this.inputRef} readOnly />
+          <input {...nextProps} type="search" value={this.state.displayValue} readOnly />
         </div>
-        <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } hide={ !this.state.popup } ref={ this.FakeSearchPanleRef } value={ this.state.value } />
+        <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } popup={ this.state.popup } value={ this.state.value } />
       </div>
     )
   }
