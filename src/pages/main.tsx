@@ -1,7 +1,6 @@
 import * as React from 'react'
 
-// import Toast, { State as ToastState} from "../components/Toast";
-import SearchBar from '../components/Search'
+import SearchBar from '../components/SearchBar/SearchBar'
 
 const initialState = { time: Date.now() }
 type State = Readonly<typeof initialState>
