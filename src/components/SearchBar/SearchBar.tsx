@@ -78,6 +78,19 @@ export class SearchBar extends PureComponent<Props, InitalState> {
   }
 
   /**
+   * 路由信息读取，当路由以 /search 结尾则进行弹出
+   */
+  public componentDidMount () {
+    if (this.props.location.pathname.match(/\/search$/)) {
+      this.setState(function () {
+        return {
+          popup: true
+        }
+      })
+    }
+  }
+
+  /**
    * input值变动处理
    */
   public changeHandle = (evt: React.ChangeEvent<HTMLInputElement>) => {
