@@ -68,7 +68,7 @@ type Props = {
  * @class SearchBar
  * @desc 搜索栏
  */
-class SearchBar extends PureComponent<Props, InitalState> {
+export class SearchBar extends PureComponent<Props, InitalState> {
   readonly state: InitalState = {
     popup: false,
     displayValue: this.props.value ? this.props.value + '' : '空值初始化',
