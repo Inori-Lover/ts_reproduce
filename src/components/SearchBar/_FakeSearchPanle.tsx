@@ -191,10 +191,14 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
   }
 
   public render () {
+    /**
+     * 分离非string类型的props防止其传递到DOM元素上造成歧义
+     */
+    const { staticContext, location, match, history, ...withoutRouter } = this.props
     return (
       <div className={ `fake_search_panle ${ this.state.popup ? 'active' : 'hide' }` } onClick={ this.closeHandle }>
         <div className="slie_border input_box">
-          <input type='search' value={ this.state.value } onChange={ this.changeHandle } onClick={ this.clickHandle } onBlur={ this.blurHandle } ref={ this.inputElementRef } />
+          <input type='search' {...withoutRouter} value={ this.state.value } onChange={ this.changeHandle } onClick={ this.clickHandle } onBlur={ this.blurHandle } ref={ this.inputElementRef } />
         </div>
       </div>
     )

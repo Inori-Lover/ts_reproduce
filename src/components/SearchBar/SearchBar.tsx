@@ -166,12 +166,11 @@ export class SearchBar extends PureComponent<Props, InitalState> {
      * 分离非string类型的props防止其传递到DOM元素上造成歧义
      */
     const { syncbetween, staticContext, ...nextProps } = this.props
-    const { location, match, history, ...withoutRouter } = nextProps
 
     return (
       <div className='react_searchbar_input_container'>
         <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input {...withoutRouter} type="search" value={this.state.displayValue} readOnly />
+          <input type="search" value={this.state.displayValue} readOnly />
         </div>
         <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } popup={ this.state.popup } value={ this.state.value } />
       </div>
