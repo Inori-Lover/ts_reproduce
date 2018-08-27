@@ -1,3 +1,34 @@
+/*
+  2018年8月27日15点28分
+  360 9.1 chrome 55
+  360 10 chrome 63
+  https://caniuse.com/#compare=firefox+50,chrome+55,safari+10.1,ios_saf+7.0-7.1,android+4.4,and_qq+1.2
+
+  special available
+  clac
+  vmax
+  SVG effects for HTML
+  CSS Filter
+  flex
+  AAC Audio
+  WOFF
+  CORS
+  SVG Animation
+  font-unicode-range
+  pointer-events
+  text-stroke
+  text-fill
+
+  special not available
+  zoom firefox all
+  object-fit ios-8 & android-4-4
+  TLS 1.1/2 chrome 67
+  HTTP/2 ios-9 & chrome webview 67
+  WOFF 2 ios-10.2 & chrome webview 67
+  sw ios 11.4 & chrome webview 67
+  webgl chrome webview 67
+*/
+
 html, body, #root {
   // 移动端没事就尽量避免height 100的设置，ios下滚动贼难受，原因暂不明
   font-family: "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", Helvetica, "Microsoft YaHei", Arial;
