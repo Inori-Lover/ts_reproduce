@@ -81,6 +81,9 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
    * 弹层收起
    */
   private closeHandle = () => {
+    if (!this.state.popup) {
+      return
+    }
     this.cancelPageFixedTop()
     this.resumePosition()
     this.setState(function () {
@@ -194,7 +197,7 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
     /**
      * 分离非string类型的props防止其传递到DOM元素上造成歧义
      */
-    const { staticContext, location, match, history, ...withoutRouter } = this.props
+    const { popup, closeOnBlur, staticContext, location, match, history, ...withoutRouter } = this.props
     return (
       <div className={ `fake_search_panle ${ this.state.popup ? 'active' : 'hide' }` } onClick={ this.closeHandle }>
         <div className="slie_border input_box">
