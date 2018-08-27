@@ -132,6 +132,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
         search: true
       }
     })
+    /**
+     * 取消监听返回键
+     */
+    window.removeEventListener('popstate', this.closeHandle)
     // 监听返回键
     window.addEventListener('popstate', this.closeHandle, {
       once: true
@@ -160,10 +164,24 @@ export class SearchBar extends PureComponent<Props, InitalState> {
      * 取消监听返回键
      */
     window.removeEventListener('popstate', this.closeHandle)
+    window.removeEventListener('popstate', this.interceForward)
     /**
      * 实现url与弹层状态对应关系
      */
     !evt && this.props.history.go(-1)
+    // 监听前进键
+    setTimeout(() => {
+      window.addEventListener('popstate', this.interceForward, {
+        once: true
+      })
+    }, 0);
+  }
+
+  /**
+   * 前进按钮处理
+   */
+  private interceForward = (evt: any) => {
+    this.popupHandle()
   }
 
   public render() {
