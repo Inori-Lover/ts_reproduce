@@ -82,11 +82,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
    */
   public componentDidMount () {
     if (this.props.location.pathname.match(/\/search$/)) {
-      this.setState(function () {
-        return {
-          popup: true
-        }
+      this.props.history.replace({
+        pathname: this.props.location.pathname.replace(/\/search$/, '')
       })
+      this.popupHandle()
     }
   }
 
@@ -127,18 +126,22 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     /**
      * 实现url与弹层状态对应关系
      */
-    this.props.history.replace({
+    this.props.history.push({
       pathname: `${this.props.match.path}/search`,
       state: {
         search: true
       }
+    })
+    // 监听返回键
+    window.addEventListener('popstate', this.closeHandle, {
+      once: true
     })
   }
 
   /**
    * 弹层关闭控制函数
    */
-  private closeHandle = () => {
+  private closeHandle = (evt?: any) => {
     /**
      * 关闭弹层
      */
@@ -154,11 +157,13 @@ export class SearchBar extends PureComponent<Props, InitalState> {
       document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
     }
     /**
+     * 取消监听返回键
+     */
+    window.removeEventListener('popstate', this.closeHandle)
+    /**
      * 实现url与弹层状态对应关系
      */
-    this.props.history.replace({
-      pathname: this.props.location.pathname.replace(/\/search$/, '')
-    })
+    !evt && this.props.history.go(-1)
   }
 
   public render() {
