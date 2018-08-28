@@ -1,0 +1,28 @@
+@import 'InputBox';
+@import '../var';
+
+.fake_search_panle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: #fff;
+  transform: translateX(100%);
+  z-index: 1;
+  opacity: 0;
+  transition: transform .25s, opacity .25s;
+  &.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .input_box {
+    position: fixed;
+    input {
+      text-align: left;
+      text-indent: 1em;
+      color: $color-text-base;
+    }
+  }
+}

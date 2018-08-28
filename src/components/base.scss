@@ -1,7 +1,8 @@
 .slie_border {
   // border: 1px solid rgba(#fff, 0);
   box-sizing: border-box;
-  &::after {
+  position: relative;
+  &::before {
     content: '';
     position: absolute;
     top: 0px;

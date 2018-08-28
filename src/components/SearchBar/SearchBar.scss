@@ -1,36 +1,11 @@
+@import 'InputBox';
+@import '../var';
+
 .react_searchbar_input_container {
   position: relative;
   box-sizing: border-box;
-  .input_box {
-    position: relative;
-    width: 100%;
-    height: 24px;
-    line-height: 24px;
-    display: block;
-    box-sizing: border-box;
-    transition: transform .25s ease-in-out, opacity .25s ease-in-out;
-    input {
-      border: none;
-      display: block;
-      font-size: inherit;
-      height: inherit;
-      line-height: inherit;
-      text-indent: 1em;
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-      &::-webkit-search-cancel-button {
-        -webkit-appearance: none;
-      }
-    }
-  }
-  .fake_input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    &.active {
-      opacity: 1;
-    }
+  input {
+    text-align: center;
+    color: $color-text-placeholder;
   }
 }

@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
+
 import '../base.scss'
-import './_FakeSearchPanle.scss'
+import './FakeSearchPanle.scss'
+
 
 /**
  * 搜索弹层Props类型定义
@@ -80,7 +82,7 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
   /**
    * 弹层收起
    */
-  private closeHandle = () => {
+  private closeHandle = (evt?: React.MouseEvent) => {
     if (!this.state.popup) {
       return
     }
@@ -111,6 +113,7 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
    * input 点击处理
    */
   private clickHandle = (evt: React.MouseEvent<HTMLInputElement>) => {
+    evt.stopPropagation()
     this.focusHelper()
     this.props.onClick && this.props.onClick(evt)
   }
@@ -200,8 +203,11 @@ export class _FakeSearchPanle extends PureComponent<Props, State> {
     const { popup, closeOnBlur, staticContext, location, match, history, ...withoutRouter } = this.props
     return (
       <div className={ `fake_search_panle ${ this.state.popup ? 'active' : 'hide' }` } onClick={ this.closeHandle }>
-        <div className="slie_border input_box">
-          <input type='search' {...withoutRouter} value={ this.state.value } onChange={ this.changeHandle } onClick={ this.clickHandle } onBlur={ this.blurHandle } ref={ this.inputElementRef } />
+        <div className="react_searchbar_input input_box">
+          <div className="main_content slie_border">
+            <input type='search' {...withoutRouter} value={ this.state.value } onChange={ this.changeHandle } onClick={ this.clickHandle } onBlur={ this.blurHandle } ref={ this.inputElementRef } />
+          </div>
+          <div className="cancel_btn">取消</div>
         </div>
       </div>
     )

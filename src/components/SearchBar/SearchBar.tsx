@@ -11,7 +11,7 @@ import { Omit } from '../../tools/Omit'
 import { withDefaultProps } from '../../tools/defaultProps'
 
 // 自定义组件
-import { _FakeSearchPanle as FakeSearchPanle } from './_FakeSearchPanle'
+import { _FakeSearchPanle as FakeSearchPanle } from './FakeSearchPanle'
 
 // 资源
 import '../base.scss'
@@ -47,6 +47,7 @@ export type State = Partial<Omit<InitalState, ShadowState>>
  */
 const defaultProps: DefaultProps = {
   syncbetween: true,
+  closeOnBlur: true
 }
 
 /**
@@ -54,6 +55,7 @@ const defaultProps: DefaultProps = {
  */
 type DefaultProps = {
   syncbetween: boolean
+  closeOnBlur: boolean
 }
 
 /**
@@ -61,6 +63,7 @@ type DefaultProps = {
  */
 type Props = {
   syncbetween?: boolean
+  closeOnBlur?: boolean
 } & ( DefaultProps & React.InputHTMLAttributes<HTMLInputElement> & RouteComponentProps<any>)
 
 
@@ -180,7 +183,7 @@ export class SearchBar extends PureComponent<Props, InitalState> {
   /**
    * 前进按钮处理
    */
-  private interceForward = (evt: any) => {
+  private interceForward = () => {
     this.popupHandle()
   }
 
@@ -192,8 +195,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
 
     return (
       <div className='react_searchbar_input_container'>
-        <div className="slie_border input_box" onClick={this.popupHandle}>
-          <input type="search" value={this.state.displayValue} readOnly />
+        <div className="react_searchbar_input input_box" onClickCapture={this.popupHandle}>
+          <div className="slie_border main_content">
+            <input type="search" value={this.state.displayValue} readOnly />
+          </div>
         </div>
         <FakeSearchPanle {...nextProps} onChange={ this.changeHandle } onClose={ this.closeHandle } popup={ this.state.popup } value={ this.state.value } />
       </div>

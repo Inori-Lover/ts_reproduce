@@ -45,6 +45,7 @@ html, body, #root {
   outline: none;
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 .js-temp_overflow_hidden {

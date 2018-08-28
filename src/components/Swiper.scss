@@ -1,0 +1,33 @@
+@import './var';
+
+$pagination-size: 6px;
+
+.swiper_pagination_container {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  justify-content: center;
+  .tab-pagination {
+    background-color: $color-icon-base;
+    width: $pagination-size;
+    height: $pagination-size;
+    border: none;
+    border-radius: 100%;
+    margin: $pagination-size * 1.2;
+    &.active {
+      background-color: $brand-primary;
+    }
+  }
+}
+.swiper_item {
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  img {
+    width: auto;
+    visibility: hidden;
+    max-width: 100%;
+  }
+}
