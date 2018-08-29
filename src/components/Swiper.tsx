@@ -62,8 +62,6 @@ export class Swiper extends React.PureComponent<Partial<TabsProps> & Props> {
       page = {this.state.index}
       tabBarPosition={`bottom`}
       renderTabBar={(props) => {
-        console.log(props)
-        console.log(props.tabs.length)
         return (
           <div className={`swiper_pagination_container`}>
             { props.tabs.map((item, index) => <div key={index} className={`tab-pagination ${props.activeTab === index ? 'active' : 'inactive'}`}></div>) }
