@@ -74,8 +74,8 @@ type Props = {
 export class SearchBar extends PureComponent<Props, InitalState> {
   readonly state: InitalState = {
     popup: false,
-    displayValue: this.props.value ? this.props.value + '' : '空值初始化',
-    value: this.props.value ? this.props.value + '' : '空值初始化',
+    displayValue: this.props.value ? this.props.value + '' : '🔍 搜索',
+    value: this.props.value ? this.props.value + '' : '',
     transformTop: '0px',
     currentScrollPositon: null,
   }
