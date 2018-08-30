@@ -58,21 +58,21 @@ export class Swiper extends React.PureComponent<Partial<TabsProps> & Props> {
     })
     return (
       <Tabs { ...this.props }
-      tabs = { tabs }
-      page = {this.state.index}
-      tabBarPosition={`bottom`}
-      renderTabBar={(props) => {
-        return (
-          <div className={`swiper_pagination_container`}>
-            { props.tabs.map((item, index) => <div key={index} className={`tab-pagination ${props.activeTab === index ? 'active' : 'inactive'}`}></div>) }
-          </div>
-        )
-      }}
+        tabs = { tabs }
+        page = {this.state.index}
+        tabBarPosition={`bottom`}
+        renderTabBar={(props) => {
+          return (
+            <div className={`swiper_pagination_container`}>
+              { props.tabs.map((item, index) => <div key={index} className={`tab-pagination ${props.activeTab === index ? 'active' : 'inactive'}`}></div>) }
+            </div>
+          )
+        }}
       >
-        { this.props.swiperList.map(item => {
+        { this.props.swiperList.map((item, index) => {
           if (!item.type || (item.type && item.type === 'img')) {
             return (
-              <div className={`swiper_item`} style={{ backgroundImage: `url("${item.src}")` }}>
+              <div key={ index } className={`swiper_item`} style={{ backgroundImage: `url("${item.src}")` }}>
                 <img src={`${item.src}`} alt=""/>
               </div>
             )
