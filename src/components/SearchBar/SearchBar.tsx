@@ -6,9 +6,10 @@
 import React, { PureComponent } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-// 类型
+// 工具
 import { Omit } from '../../tools/Omit'
 import { withDefaultProps } from '../../tools/defaultProps'
+import { isWebKit } from '../../tools/browser'
 
 // 自定义组件
 import { _FakeSearchPanle as FakeSearchPanle } from './FakeSearchPanle'
@@ -90,6 +91,34 @@ export class SearchBar extends PureComponent<Props, InitalState> {
       })
       this.popupHandle()
     }
+    /**
+     * @desc
+     * webkit内核浏览器仅在document.onloaded之前pop事件不会被指派（监听）；如果在loading期间触发过至少一次的话 github.com/ReactTraining/history(react-router) 会有一个 'Initial POP'
+     * @url https://stackoverflow.com/a/14150776
+     */
+    let initialPOP = false
+    this.props.history.listen((location, action): void => {
+      /**
+       * 浏览器的前进后退按钮永远触发的都是pop
+       */
+      if (action === 'POP') {
+        if (initialPOP) {
+          initialPOP = false
+          return
+        }
+        if (location.state && location.state.search === true) {
+          this.popupHandle(true)
+        } else {
+          this.closeHandle(true)
+        }
+      } else if (action === 'PUSH' && location.state.search === true && isWebKit && document.readyState !== "complete") {
+        // 前进操作且处于 未 加载完毕状态
+        initialPOP = true
+      } else if (action === 'PUSH' && location.state.search === true && isWebKit && document.readyState === "complete") {
+        // 前进操作且处于 已 加载完毕状态
+        initialPOP = false
+      }
+    })
   }
 
   /**
@@ -112,8 +141,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
 
   /**
    * 弹层弹出控制函数
+   *
+   * @param {boolean|React.MouseEvent} HasPush 是否已经触发过Pop
    */
-  private popupHandle = () => {
+  private popupHandle = (HasPush ?: boolean|React.MouseEvent) => {
     /**
      * 弹出弹层
      */
@@ -129,26 +160,20 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     /**
      * 实现url与弹层状态对应关系
      */
-    this.props.history.push({
+    HasPush !== true && this.props.history.push({
       pathname: `${this.props.match.path}/search`,
       state: {
         search: true
       }
     })
-    /**
-     * 取消监听返回键
-     */
-    window.removeEventListener('popstate', this.closeHandle)
-    // 监听返回键
-    window.addEventListener('popstate', this.closeHandle, {
-      once: true
-    })
   }
 
   /**
    * 弹层关闭控制函数
+   *
+   * @param {boolean|React.MouseEvent} HasPop 是否已经触发过Pop
    */
-  private closeHandle = (evt?: any) => {
+  private closeHandle = (HasPop?: boolean|React.MouseEvent) => {
     /**
      * 关闭弹层
      */
@@ -164,27 +189,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
       document.body.className = document.body.className.replace(/\s?js-temp_overflow_hidden/g, '')
     }
     /**
-     * 取消监听返回键
-     */
-    window.removeEventListener('popstate', this.closeHandle)
-    window.removeEventListener('popstate', this.interceForward)
-    /**
      * 实现url与弹层状态对应关系
      */
-    !evt && this.props.history.go(-1)
-    // 监听前进键
-    setTimeout(() => {
-      window.addEventListener('popstate', this.interceForward, {
-        once: true
-      })
-    }, 0);
-  }
+    HasPop !== true && this.props.history.go(-1)
 
-  /**
-   * 前进按钮处理
-   */
-  private interceForward = () => {
-    this.popupHandle()
   }
 
   public render() {
@@ -195,7 +203,7 @@ export class SearchBar extends PureComponent<Props, InitalState> {
 
     return (
       <div className='react_searchbar_input_container'>
-        <div className="react_searchbar_input input_box" onClickCapture={this.popupHandle}>
+        <div className="react_searchbar_input input_box" onClickCapture={ this.popupHandle }>
           <div className="slie_border main_content">
             <input type="search" value={this.state.displayValue} readOnly />
           </div>
