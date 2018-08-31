@@ -27,9 +27,9 @@ type Props = {
 export const Grid: SFC<Props> = function ({ peerLine, children }) {
   return (
     <div className={`inori-grid_container`} style={{color: `#${peerLine}`}}>{
-      children.map(item => {
+      children.map((item, index) => {
         return (
-          <div className="inori-grid_item" style={{flexBasis: `${100 / peerLine}%`}}>{item}</div>
+          <div key={ index } className="inori-grid_item" style={{flexBasis: `${100 / peerLine}%`}}>{item}</div>
       )})
     }</div>
   )
