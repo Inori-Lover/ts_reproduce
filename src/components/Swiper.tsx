@@ -2,6 +2,7 @@ import React from 'react'
 import Tabs from 'antd-mobile/lib/tabs'
 
 import TabsProps from 'antd-mobile/lib/tabs/PropsType'
+import AsyncImage from './AsyncImage/AsyncImage'
 
 import 'antd-mobile/lib/tabs/style/css'
 import './Swiper.scss'
@@ -72,8 +73,8 @@ export class Swiper extends React.PureComponent<Partial<TabsProps> & Props> {
         { this.props.swiperList.map((item, index) => {
           if (!item.type || (item.type && item.type === 'img')) {
             return (
-              <div key={ index } className={`swiper_item`} style={{ backgroundImage: `url("${item.src}")` }}>
-                <img src={`${item.src}`} alt=""/>
+              <div className={`swiper_item`} key={index}>
+                <AsyncImage src={item.src} type="cover" />
               </div>
             )
           } else {

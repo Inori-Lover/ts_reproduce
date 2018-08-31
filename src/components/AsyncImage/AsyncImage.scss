@@ -1,0 +1,13 @@
+.inori-lazy_image_container {
+  background-position: center;
+  &.cover {
+    background-size: cover;
+  }
+  &.contain {
+    background-size: contain;
+  }
+
+  img {
+    visibility: hidden;
+  }
+}

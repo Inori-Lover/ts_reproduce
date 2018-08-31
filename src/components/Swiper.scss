@@ -23,11 +23,8 @@ $pagination-size: 6px;
 }
 .swiper_item {
   width: 100%;
-  background-size: cover;
-  background-position: center;
   img {
     width: auto;
-    visibility: hidden;
     max-width: 100%;
   }
 }
