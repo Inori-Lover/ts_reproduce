@@ -47,8 +47,8 @@ export type State = Partial<Omit<InitalState, ShadowState>>
  * 默认Props
  */
 const defaultProps: DefaultProps = {
-  syncbetween: true,
-  closeOnBlur: true
+  syncbetween: false,
+  closeOnBlur: false
 }
 
 /**
@@ -111,10 +111,10 @@ export class SearchBar extends PureComponent<Props, InitalState> {
         } else {
           this.closeHandle(true)
         }
-      } else if (action === 'PUSH' && location.state.search === true && isWebKit && document.readyState !== "complete") {
+      } else if (action === 'PUSH' && location.state && location.state.search === true && isWebKit && document.readyState !== "complete") {
         // 前进操作且处于 未 加载完毕状态
         initialPOP = true
-      } else if (action === 'PUSH' && location.state.search === true && isWebKit && document.readyState === "complete") {
+      } else if (action === 'PUSH' && location.state && location.state.search === true && isWebKit && document.readyState === "complete") {
         // 前进操作且处于 已 加载完毕状态
         initialPOP = false
       }
@@ -160,7 +160,7 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     /**
      * 实现url与弹层状态对应关系
      */
-    HasPush !== true && this.props.history.push({
+    HasPush !== true && ( !isWebKit || (isWebKit && document.readyState === "complete") ) && this.props.history.push({
       pathname: `${this.props.match.path}/search`,
       state: {
         search: true
@@ -191,7 +191,7 @@ export class SearchBar extends PureComponent<Props, InitalState> {
     /**
      * 实现url与弹层状态对应关系
      */
-    HasPop !== true && this.props.history.go(-1)
+    HasPop !== true && (this.props.location.state && this.props.location.state.search === true) && ( !isWebKit || (isWebKit && document.readyState === "complete") ) && this.props.history.go(-1)
 
   }
 
