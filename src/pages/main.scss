@@ -1,0 +1,28 @@
+@import '../var';
+
+.am-grid-round {
+  .am-flexbox .am-flexbox-item .am-grid-item-content .am-grid-item-inner-content {
+    .am-grid-icon {
+      width: 85%;
+      border-radius: 50%;
+    }
+    .am-grid-text {
+      color: $color-text-secondary;
+    }
+  }
+}
+
+.Marquee_item {
+  display: flex;
+  height: 60px;
+  .tag {
+    flex: 0;
+    flex-basis: 2.5em;
+    text-align: center;
+    border: 1px solid red;
+    color: red;
+    border-radius: 4px;
+  }
+  .content {}
+  .image {}
+}
