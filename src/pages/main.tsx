@@ -31,15 +31,15 @@ class Swiper extends React.PureComponent {
   }
 
   private swiperItem: string[] = [
-    'https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png',
+    'https://img.alicdn.com/imgextra/i4/57/TB2MztfuHArBKNjSZFLXXc_dVXa_!!57-0-luban.jpg',
     'http://eskipaper.com/images/guilty-crown-7.jpg',
-    'https://zos.alipayobjects.com/rmsportal/IJOtIlfsYdTyaDTRVrLI.png'
+    'https://gw.alicdn.com/imgextra/i3/65/TB2o3wnvXooBKNjSZFPXXXa2XXa_!!65-0-lubanu.jpg'
   ]
 
   public render () {
     return (
         <Carousel
-          autoplay={true}
+          autoplay
           infinite
         >
           {this.swiperItem.map(val => (
@@ -76,60 +76,54 @@ class Marquee extends React.PureComponent {
   private marqueeData = [
     {
       tag: ['最新', '火热'],
-      text: ['趁主人', '趁'],
-      image: 'https://gw.alicdn.com/tps/TB1d30fPVXXXXbGXXXXXXXXXXXX-183-144.png_.webp',
+      text: ['趁主人不再这只猫娘居然在偷偷干这档事情', '趁主人不再这只猫娘居然在偷偷干这档事情'],
+      image: 'https://ossgw.alicdn.com/tbheadline/g0/24hHn3c/m/989cef22e66e48c79c877afdaa35351d.jpeg',
     },
     {
       tag: ['最新', '火热'],
       text: ['趁主人不再这只猫娘居然在偷偷干这档事情', '趁主人不再这只猫娘居然在偷偷干这档事情'],
-      image: 'https://gw.alicdn.com/tps/TB1d30fPVXXXXbGXXXXXXXXXXXX-183-144.png_.webp',
+      image: 'https://ossgw.alicdn.com/tbheadline/g0/24hHn3c/m/989cef22e66e48c79c877afdaa35351d.jpeg',
     },
     {
-      tag: '火热',
-      text: '趁主人不再这只猫娘居然在偷偷干这档事情',
-      image: 'https://gw.alicdn.com/tps/TB1d30fPVXXXXbGXXXXXXXXXXXX-183-144.png_.webp',
+      tag: ['火热'],
+      text: ['趁主人不再这只猫娘居然在偷偷干这档事情'],
+      image: 'https://ossgw.alicdn.com/tbheadline/g0/24hHn3c/m/989cef22e66e48c79c877afdaa35351d.jpeg',
     },
   ]
 
   public render () {
     return (
       <Carousel vertical
-          dots={false}
-          autoplay
-          infinite
-        >
+        infinite
+        autoplay
+        dots={false}
+      >
           {
-            this.marqueeData.map((item, index) => {
-              if (item.text.length === item.tag.length) {
-                item = item as {
-                  text: string[]
-                  tag: string[]
-                  image: string
-                }
-                return (
-                  item.tag.map((_item, _index) => {
-                    return (
-                      <div className="Marquee_item">
-                        {item.tag[_index] && <div className="tag">{item.tag[_index]}</div>}
-                        <div className="content">{item.text[_index]}</div>
-                        <div className="image">
-                          <img src={item.image} alt=""/>
-                        </div>
-                      </div>
-                    )
-                  })
-                )
-              } else {
-                return (
-                  <div className="Marquee_item">
-                    {item.tag && <div className="tag">{item.tag}</div>}
-                    <div className="content">{item.text}</div>
-                    <div className="image">
-                      <img src={item.image} alt=""/>
-                    </div>
+            this.marqueeData.map(item => {
+              return (
+                <div className="Marquee_items">
+                  <div className="shop_name">
+                    好运快讯
                   </div>
-                )
-              }
+                  <div className="vertical_flex_box">
+                    {
+                      item.tag.map((_item, _index) => {
+                        return(
+                          <div className="Marquee_item">
+                            { item.tag[_index] && <div className="tag">{item.tag[_index].substr(0, 2)}</div> }
+                            <div className="content">{item.text[_index]}</div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                  <div className="image">
+                    <img src={item.image} alt=""/>
+                    {/* 半透明渐变png */}
+                    <img className="image_fixed" src={'https://gw.alicdn.com/mt/TB1tzxrrTtYBeNjy1XdXXXXyVXa-390-255.png'} alt=""/>
+                  </div>
+                </div>
+              )
             })
           }
         </Carousel>

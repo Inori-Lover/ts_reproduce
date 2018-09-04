@@ -1,28 +1,95 @@
 @import '../var';
 
 .am-grid-round {
-  .am-flexbox .am-flexbox-item .am-grid-item-content .am-grid-item-inner-content {
-    .am-grid-icon {
-      width: 85%;
-      border-radius: 50%;
-    }
-    .am-grid-text {
-      color: $color-text-secondary;
+  .am-flexbox .am-flexbox-item .am-grid-item-content {
+    padding-top: 0;
+    padding-bottom: 0;
+    .am-grid-item-inner-content {
+      .am-grid-icon {
+        width: 85%;
+        border-radius: 50%;
+      }
+      .am-grid-text {
+        color: $color-text-secondary;
+      }
     }
   }
 }
 
-.Marquee_item {
+$Marquee_item_height: 16px;
+$Marquee_item_space: 10px;
+$Marquee_height: ( $Marquee_item_height + $Marquee_item_space ) * 2;
+
+.Marquee_items {
   display: flex;
-  height: 60px;
+  height: $Marquee_height;
+  background-color: #fff;
+  .shop_name {
+    flex: none;
+    flex-basis: 2.2em;
+    word-break: break-all;
+    white-space: normal;
+    display: flex;
+    align-items: center;
+    line-height: $Marquee_height / 2.5;
+  }
+  .vertical_flex_box {
+    display: flex;
+    flex-wrap: wrap;
+    .content {
+      flex: 1;
+      flex-basis: 51%;
+    }
+  }
   .tag {
-    flex: 0;
+    font-size: 10px;
+    flex: none;
     flex-basis: 2.5em;
     text-align: center;
     border: 1px solid red;
     color: red;
     border-radius: 4px;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    line-height: $Marquee_height;
+    margin-left: 4px;
   }
-  .content {}
-  .image {}
+  .content {
+    flex: 1;
+    font-size: 10px;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 4px;
+    margin-right: -8px;
+    line-height: $Marquee_height;
+  }
+  .Marquee_item {
+    display: flex;
+    margin-top: $Marquee_item_space / 2;
+    margin-bottom: $Marquee_item_space / 2;
+    height: $Marquee_item_height;
+    .tag,
+    .content {
+      line-height: $Marquee_item_height;
+    }
+  }
+  .image {
+    flex: none;
+    flex-basis: 20vw;
+    position: relative;
+    overflow: hidden;
+    img {
+      margin-left: auto;
+      max-height: 100%;
+      &.image_fixed {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
 }
